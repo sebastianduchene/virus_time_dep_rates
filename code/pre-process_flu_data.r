@@ -1,4 +1,4 @@
-metadata <- read.csv("../data/raw/FLu_8445_segments_METADATA.csv", header = TRUE)
+metadata <- read.csv("../data/alignments/flu/raw/FLu_8445_segments_METADATA.csv", header = TRUE)
 lastf <- function(x) x[length(x)]
 metadata$Collection.Year <- as.numeric(unlist(lapply(strsplit(as.character(metadata$Collection.Date), "/"), lastf)))
 Freqs.full <- table(metadata$Collection.Year)
@@ -20,7 +20,7 @@ metadata$Sequence.Accession  <- gsub("\\*", "", metadata$Sequence.Accession)
 # ape::write.dna(newAln, "../data/raw/flu_8445_segments_seqs_aligned_renamed.fasta", format = "fasta")
 ################################
 howManysamples <- function(time_span, freqs){
-  if(time_span < 2) stop("Time span less than 2 years makes no sense")
+  if(time_span < 2) stop("Time spans less than 2 years make no sense")
   Years <- as.numeric(names(freqs))
   windows <- seq(min(Years), max(Years), by = time_span)
   K <- length(windows) + 1
