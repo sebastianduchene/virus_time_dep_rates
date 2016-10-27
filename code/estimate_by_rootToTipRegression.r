@@ -12,13 +12,13 @@ estimate_rate <- function(aln){
   res <- find_best_rooting(MLtree)$lm
   return(res)
 }
-setwd("../data/processed/aligned/")
+setwd("../data/alignments/flu/experiment_1/processed/aligned/")
 alns <- system("ls *.fasta", intern = TRUE)
 Alns <- lapply(alns, function(x) ape::read.dna(x, format = "fasta"))
 Diversities <- unlist(lapply(Alns, function(x) pegas::nuc.div(x)))
 Names <- gsub(".fasta", "", alns)
 RDVS <- parallel::mclapply(alns, estimate_rate, mc.cores = 8)
-setwd("../../../code/")
+setwd("../../../../../../code/")
 getRate <- function(lm_obj){
   m <-  coef(lm_obj)[2]
   ci <- confint(lm_obj)[2, ]
@@ -48,14 +48,14 @@ library(ggplot2)
 forPlot <- data.frame(Rates, time_span = spans) 
 number_ticks <- function(n) { function(limits) pretty(limits, n) }
 p <- ggplot(forPlot, aes(x = time_span, y = mean)) +
-  geom_smooth(method = 'lm') + 
-  geom_pointrange(aes(ymin = lwr, ymax = upr), position = position_dodge(0.5)) +
-  geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
-  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
-                     breaks = number_ticks(10), expand = c(0, 0)) +
-  scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
-  ggtitle("Rate estimates by RDV regression -- Influenza H3N2") +
-  theme_bw()
+geom_smooth(method = 'lm') + 
+geom_pointrange(aes(ymin = lwr, ymax = upr), position = position_dodge(0.5)) +
+geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
+scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+                   breaks = number_ticks(10), expand = c(0, 0)) +
+scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
+ggtitle("Rate estimates by RDV regression -- Influenza H3N2") +
+theme_bw()
 p
 pdf("../plots/preliminary_influenza.pdf")
 p
