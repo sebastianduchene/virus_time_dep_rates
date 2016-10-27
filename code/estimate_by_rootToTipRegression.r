@@ -28,7 +28,11 @@ getSpan <- function(rdv){
   r <-range(rdv$model$ages)
   r[2]-r[1]
 }
+getMinYear <- function(rdv){
+  min(rdv$model$ages)
+}
 spans <- unlist(lapply(RDVS, getSpan))
+initYear <- unlist(lapply(RDVS, getMinYear))
 Rates <- matrix(NA, ncol = 3, nrow = length(RDVS))
 colnames(Rates) <- c("lwr", "mean", "upr")
 for (i in 1:nrow(Rates)) Rates[i, ] <- getRate(RDVS[[i]])
@@ -45,11 +49,11 @@ abline(LM)
 boxplot(Diversities ~ ifelse(Rates[, "mean"] < 0, 1, 0)) ## differences in diversity between rates < 0 and rates > 0
 ##############
 library(ggplot2)
-forPlot <- data.frame(Rates, time_span = spans) 
+forPlot <- data.frame(Rates, time_span = spans, start_year = initYear) 
 number_ticks <- function(n) { function(limits) pretty(limits, n) }
 p <- ggplot(forPlot, aes(x = time_span, y = mean)) +
 geom_smooth(method = 'lm') + 
-geom_pointrange(aes(ymin = lwr, ymax = upr), position = position_dodge(0.5)) +
+geom_pointrange(aes(ymin = lwr, ymax = upr, col = start_year), position = position_dodge(0.5)) +
 geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
 scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
                    breaks = number_ticks(10), expand = c(0, 0)) +
