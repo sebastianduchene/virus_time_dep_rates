@@ -1,4 +1,4 @@
-metadata <- read.csv("../data/alignments/flu/experiment_1/raw/FLu_8445_segments_METADATA.csv",
+metadata <- read.csv("../data/alignments/flu/experiment_1/raw/flu_8445_segments_METADATA.csv",
                      header = TRUE)
 lastf <- function(x) x[length(x)]
 metadata$Collection.Year <- as.numeric(unlist(lapply(strsplit(as.character(metadata$Collection.Date),
@@ -31,7 +31,7 @@ getSpan <- function(dt) max(dt$Collection.Year) - min(dt$Collection.Year)
 Spans <- unlist(lapply(Tentative.samples, getSpan))
 table(Spans)
 ####
-Aln <- ape::read.dna("../data/alignments/flu/experiment_1/raw/flu_8445_segments_seqs_renamed_new.fasta",
+Aln <- ape::read.dna("../data/alignments/flu/experiment_1/raw/flu_8445_segments_seqs_renamed.fasta",
                      format = "fasta")
 getSeq <- function(genbank_id, aln){
   pos <- grep(genbank_id, names(aln))
