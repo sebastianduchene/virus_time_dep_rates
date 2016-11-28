@@ -61,6 +61,81 @@ scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = 
 ggtitle("Rate estimates by RDV regression -- Influenza H3N2") +
 theme_bw()
 p
-pdf("../plots/preliminary_influenza.pdf")
+pdf("../plots/preliminary_influenza_rdv.pdf")
 p
 dev.off()
+############
+Fnames <- gsub(".fasta", "", alns)
+BeastData <- read.csv("../data/Summaries_meanRate_338_logFiles_flu.csv")
+Clocks <- unlist(lapply(strsplit(as.character(BeastData$file), "_"), function(x) x[1]))
+BeastData$clock <- Clocks
+Fnames2 <- gsub(".log", "", BeastData$file)
+Fnames2 <- gsub("ucln_", "", Fnames2)
+Fnames2 <- gsub("strict_", "", Fnames2)
+BeastData$file <- Fnames2
+forPlot2 <- forPlot
+forPlot2$file <- Fnames
+forPlot2$clock <- rep("rdv", nrow(forPlot2))
+BeastData$time_span <- c(forPlot2$time_span, forPlot2$time_span)
+BeastData$start_year <- c(forPlot2$start_year, forPlot2$start_year)
+forPlot3 <- rbind(forPlot2[, c("lwr", "mean", "upr", "clock", "time_span", "start_year")],
+                  BeastData[, c("lwr", "mean", "upr", "clock", "time_span", "start_year")])
+#########
+q1 <- ggplot(subset(forPlot3, clock == "strict"), aes(x = time_span, y = mean)) +
+  geom_smooth(method = 'lm') + 
+  geom_pointrange(aes(ymin = lwr, ymax = upr, col = start_year), position = position_dodge(0.5)) +
+  geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
+  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+                     breaks = number_ticks(10), expand = c(0, 0)) +
+  scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
+  ggtitle("Rate estimates (strict clock) -- Influenza H3N2") +
+  theme_bw()
+q1
+pdf("../plots/preliminary_influenza_strict.pdf")
+q1
+dev.off()
+#########
+q2 <- ggplot(subset(forPlot3, clock == "ucln"), aes(x = time_span, y = mean)) +
+  geom_smooth(method = 'lm') + 
+  geom_pointrange(aes(ymin = lwr, ymax = upr, col = start_year), position = position_dodge(0.5)) +
+  geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
+  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+                     breaks = number_ticks(10), expand = c(0, 0)) +
+  scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
+  ggtitle("Rate estimates (UCLN) -- Influenza H3N2") +
+  theme_bw()
+q2
+pdf("../plots/preliminary_influenza_ucln.pdf")
+q2
+dev.off()
+#########
+q3 <- ggplot(forPlot3, aes(x = time_span, y = mean, fill = clock, col = clock)) +
+  geom_smooth(method = 'lm') + 
+  geom_pointrange(aes(ymin = lwr, ymax = upr, col = clock), position = position_dodge(0.5)) +
+  geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
+  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+                     breaks = number_ticks(10), expand = c(0, 0)) +
+  scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
+  ggtitle("Rate estimates -- Influenza H3N2") +
+  theme_bw()
+q3
+pdf("../plots/preliminary_influenza.pdf")
+q3
+dev.off()
+#################
+#################
+Cols <- rev(heat.colors(5))[cut(spans, breaks = seq(min(spans), max(spans), length.out = 5), labels = c(1:4))]
+plot(subset(BeastData, clock == "ucln")$mean ~ subset(BeastData, clock == "strict")$mean,
+     col = Cols, pch  = 16,
+     xlab = "Mean rate strict (s/s/y)", ylab = "Mean rate UCLN (s/s/y)")
+abline(a = 0, b = 1, lwd = 2)
+##
+plot(subset(BeastData, clock == "ucln")$lwr ~ subset(BeastData, clock == "strict")$lwr,
+     col = Cols, pch  = 16,
+     xlab = "95% lwr rate strict (s/s/y)", ylab = "95% lwr rate UCLN (s/s/y)")
+abline(a = 0, b = 1, lwd = 2)
+##
+plot(subset(BeastData, clock == "ucln")$upr ~ subset(BeastData, clock == "strict")$upr,
+     col = Cols, pch  = 16,
+     xlab = "95% upr rate strict (s/s/y)", ylab = "95% upr rate UCLN (s/s/y)")
+abline(a = 0, b = 1, lwd = 2)
