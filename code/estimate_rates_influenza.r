@@ -89,7 +89,7 @@ q0 <- ggplot(forPlot3, aes(x = time_span, y = width, colour = clock)) +
   scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
   ggtitle("Credibility/confidence interval width -- Influenza H3N2") +
   theme_bw() 
-pdf("../plots/preliminary_influenza_witdhs.pdf")
+pdf("../plots/preliminary_influenza_widths.pdf")
 q0
 dev.off()
 #########
