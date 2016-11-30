@@ -125,17 +125,33 @@ dev.off()
 #################
 #################
 Cols <- rev(heat.colors(5))[cut(spans, breaks = seq(min(spans), max(spans), length.out = 5), labels = c(1:4))]
-plot(subset(BeastData, clock == "ucln")$mean ~ subset(BeastData, clock == "strict")$mean,
+pdf("../plots/influenza_strict_vs_ucln_MeanRate.pdf")
+plot(subset(forPlot3, clock == "ucln")$mean ~ subset(forPlot3, clock == "strict")$mean,
      col = Cols, pch  = 16,
      xlab = "Mean rate strict (s/s/y)", ylab = "Mean rate UCLN (s/s/y)")
 abline(a = 0, b = 1, lwd = 2)
+dev.off()
 ##
-plot(subset(BeastData, clock == "ucln")$lwr ~ subset(BeastData, clock == "strict")$lwr,
+pdf("../plots/influenza_rdv_vs_ucln_MeanRate.pdf")
+plot(subset(forPlot3, clock == "ucln")$mean ~ subset(forPlot3, clock == "rdv")$mean,
+     col = Cols, pch  = 16,
+     xlab = "Mean rate RDV (s/s/y)", ylab = "Mean rate UCLN (s/s/y)")
+abline(a = 0, b = 1, lwd = 2)
+dev.off()
+##
+pdf("../plots/influenza_rdv_vs_strict_MeanRate.pdf")
+plot(subset(forPlot3, clock == "strict")$mean ~ subset(forPlot3, clock == "rdv")$mean,
+     col = Cols, pch  = 16,
+     xlab = "Mean rate RDV (s/s/y)", ylab = "Mean rate strict (s/s/y)")
+abline(a = 0, b = 1, lwd = 2)
+dev.off()
+##
+plot(subset(forPlot3, clock == "ucln")$lwr ~ subset(forPlot3, clock == "strict")$lwr,
      col = Cols, pch  = 16,
      xlab = "95% lwr rate strict (s/s/y)", ylab = "95% lwr rate UCLN (s/s/y)")
 abline(a = 0, b = 1, lwd = 2)
 ##
-plot(subset(BeastData, clock == "ucln")$upr ~ subset(BeastData, clock == "strict")$upr,
+plot(subset(forPlot3, clock == "ucln")$upr ~ subset(forPlot3, clock == "strict")$upr,
      col = Cols, pch  = 16,
      xlab = "95% upr rate strict (s/s/y)", ylab = "95% upr rate UCLN (s/s/y)")
 abline(a = 0, b = 1, lwd = 2)
