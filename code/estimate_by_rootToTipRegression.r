@@ -80,12 +80,24 @@ BeastData$time_span <- c(forPlot2$time_span, forPlot2$time_span)
 BeastData$start_year <- c(forPlot2$start_year, forPlot2$start_year)
 forPlot3 <- rbind(forPlot2[, c("lwr", "mean", "upr", "clock", "time_span", "start_year")],
                   BeastData[, c("lwr", "mean", "upr", "clock", "time_span", "start_year")])
+forPlot3$width <- forPlot3$upr-forPlot3$lwr
+#########
+q0 <- ggplot(forPlot3, aes(x = time_span, y = width, colour = clock)) +
+  geom_point() + geom_smooth(method = 'lm') +
+  scale_y_continuous("BCI width",
+                        breaks = number_ticks(10), expand = c(0, 0)) +
+  scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
+  ggtitle("Credibility/confidence interval width -- Influenza H3N2") +
+  theme_bw() 
+pdf("../plots/preliminary_influenza_witdhs.pdf")
+q0
+dev.off()
 #########
 q1 <- ggplot(subset(forPlot3, clock == "strict"), aes(x = time_span, y = mean)) +
   geom_smooth(method = 'lm') + 
   geom_pointrange(aes(ymin = lwr, ymax = upr, col = start_year), position = position_dodge(0.5)) +
   geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
-  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+  scale_y_continuous("Evolutionary Rate (s/s/y)",
                      breaks = number_ticks(10), expand = c(0, 0)) +
   scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
   ggtitle("Rate estimates (strict clock) -- Influenza H3N2") +
@@ -99,7 +111,7 @@ q2 <- ggplot(subset(forPlot3, clock == "ucln"), aes(x = time_span, y = mean)) +
   geom_smooth(method = 'lm') + 
   geom_pointrange(aes(ymin = lwr, ymax = upr, col = start_year), position = position_dodge(0.5)) +
   geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
-  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+  scale_y_continuous("Evolutionary Rate (s/s/y)",
                      breaks = number_ticks(10), expand = c(0, 0)) +
   scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
   ggtitle("Rate estimates (UCLN) -- Influenza H3N2") +
@@ -113,7 +125,7 @@ q3 <- ggplot(forPlot3, aes(x = time_span, y = mean, fill = clock, col = clock)) 
   geom_smooth(method = 'lm') + 
   geom_pointrange(aes(ymin = lwr, ymax = upr, col = clock), position = position_dodge(0.5)) +
   geom_abline(intercept = 0, slope = 0, linetype = "longdash", size = .5, color = "black") + 
-  scale_y_continuous("Evolutionary Rate (s/s/y) [regression slope]",
+  scale_y_continuous("Evolutionary Rate (s/s/y)",
                      breaks = number_ticks(10), expand = c(0, 0)) +
   scale_x_continuous("Sampling span (years)", breaks = number_ticks(10), expand = c(0, 0)) +
   ggtitle("Rate estimates -- Influenza H3N2") +
